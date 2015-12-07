@@ -3,6 +3,7 @@ set -e
 # target directory for Lua/LuaRocks/...
 D="$HOME/programs"
 
+
 tgz_download() {
   curl -s -S --location "$1" | tar xz
 }
@@ -32,7 +33,7 @@ case `uname -s` in
 esac
 
 # make sure that the LUA variable is set
-test -n "$LUA"
+[ -n "$LUA" ] || LUA=5.3.2
 # create base directory if it doesn't exist
 [ -d "$D" ] || mkdir -p "$D"
 
