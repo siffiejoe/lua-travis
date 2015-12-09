@@ -26,7 +26,7 @@ install_luarocks() {
 
 
 # detect which make target to use to build Lua
-case `uname -s` in
+case "`uname -s`" in
   Linux) LUA_MAKE_TARGET=linux ;;
   Darwin) LUA_MAKE_TARGET=macosx ;;
   *) echo "unsupported system" >&2; false ;;
@@ -45,5 +45,5 @@ esac
 
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
 export PATH="$D/bin:$PATH"
-[ -z "$LUAROCKS" ] || eval `luarocks path`
+[ -z "$LUAROCKS" ] || eval "`luarocks path`"
 
