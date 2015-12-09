@@ -11,9 +11,24 @@ tgz_download() {
 
 install_lua() {
   tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz
+  case "`uname -s`" in
+    Linux) local LUA_MAKE_TARGET=linux ;;
+    Darwin) local LUA_MAKE_TARGET=macosx ;;
+    *) echo "unsupported system" >&2; return 1 ;;
+  esac
   (cd lua-"$1" && \
-    make "$2" && \
+    make "$LUA_MAKE_TARGET" && \
     make install INSTALL_TOP="$D")
+}
+
+
+install_luajit() {
+  tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz
+  (cd LuaJIT-"$1" && \
+    make PREFIX="$D" && \
+    make install PREFIX="$D")
+  ln -sf luajit "$D/bin/lua"
+  (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
 }
 
 
@@ -25,20 +40,21 @@ install_luarocks() {
 }
 
 
-# detect which make target to use to build Lua
-case "`uname -s`" in
-  Linux) LUA_MAKE_TARGET=linux ;;
-  Darwin) LUA_MAKE_TARGET=macosx ;;
-  *) echo "unsupported system" >&2; false ;;
-esac
-
-# make sure that the LUA variable is set
-[ -n "$LUA" ] || LUA=5.3.2
 # create base directory if it doesn't exist
 [ -d "$D" ] || mkdir -p "$D"
-
+# make sure that the LUA variable is set
+[ -n "$LUA" ] || LUA=5.3.2
 # download and install the requested Lua interpreter
-(cd "$D" && install_lua "$LUA" "$LUA_MAKE_TARGET")
+case "$LUA" in
+  [Ll]ua[Jj][Ii][Tt]*)
+    (cd "$D" && install_luajit "${LUA#??????}") ;;
+  [Ll]ua*)
+    (cd "$D" && install_lua "${LUA#???}") ;;
+  [0123456789]*.*)
+    (cd "$D" && install_lua "$LUA") ;;
+  *)
+    echo "invalid Lua version: $LUA" >&2; false ;;
+esac
 
 # download and install LuaRocks (if requested)
 [ -z "$LUAROCKS" ] || (cd "$D" && install_luarocks "$LUAROCKS")
