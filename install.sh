@@ -46,9 +46,9 @@ install_luarocks() {
 [ -n "$LUA" ] || LUA=5.3.2
 # download and install the requested Lua interpreter
 case "$LUA" in
-  [Ll]ua[Jj][Ii][Tt]*)
+  [Ll]ua[Jj][Ii][Tt][0123456789]*.*)
     (cd "$D" && install_luajit "${LUA#??????}") ;;
-  [Ll]ua*)
+  [Ll]ua[0123456789]*.*)
     (cd "$D" && install_lua "${LUA#???}") ;;
   [0123456789]*.*)
     (cd "$D" && install_lua "$LUA") ;;
