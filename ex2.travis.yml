@@ -1,0 +1,68 @@
+# Example Travis CI configuration for a C++ Lua module with external
+# dependencies.
+#
+# Add the lua-travis repository as a submodule named `.travis`:
+#     git submodule add https://github.com/siffiejoe/lua-travis .travis
+# Then copy and customize this file as `.travis.yml` to the root
+# directory of your repository.
+
+language: cpp
+
+# Select VM with recent Ubuntu version and sudo (for os == linux).
+# OSX doesn't require sudo when using homebrew to install packages.
+sudo: required
+dist: trusty
+
+# Use gcc as the C compiler (clang is also available).
+compiler: gcc
+
+# Specify operating systems to test on (linux and/or osx).
+os:
+  - linux
+  - osx
+
+# Environment variables for the build.
+# The `LUA` and `LUAROCKS` variables are handled by the `install.sh`
+# script in this repository. You can choose a LuaRocks version to
+# install (optional), and one or more different Lua versions. Your
+# module is built and tested with each of them (on every specified OS
+# and with every specified compiler). (And of course you can add your
+# own environment variables.)
+env:
+  global:
+    - LUAROCKS=2.2.2
+  matrix:
+    - LUA=LuaJIT2.0.4
+    - LUA=Lua5.2.4
+    - LUA=5.3.2
+
+# Only test changes to the master branch.
+branches:
+  only:
+    - master
+
+# Disable email notifications.
+# You usually see the test results in pull requests, and you can add a
+# badge to your main README.md. So the emails are just noise.
+notifications:
+  email: false
+
+# Install dependencies (Lua, Luarocks, ...).
+# The `.travis/install.sh` takes care of Lua and LuaRocks. On Linux
+# you probably want apt packages, on OSX homebrew packages. The
+# names of the packages probably differ!
+install:
+  - . .travis/install.sh
+  - test "`uname -s`" = Linux && sudo apt-get update -qq || true
+  - test "`uname -s`" = Linux && sudo apt-get install -qq libfltk1.3-dev || true
+  - test "`uname -s`" = Darwin && brew update || true
+  - test "`uname -s`" = Darwin && brew install fltk || true
+
+# Build (and test?) your project.
+# The extra `CFLAGS` setting is for enabling compiler warnings (which
+# LuaRocks by default doesn't do). The installed LuaRocks version is
+# in `PATH` (as `luarocks`), `LUA_PATH` and `LUA_CPATH` are configured,
+# and the installed Lua interpreter is in `PATH` as `lua`.
+script:
+  - luarocks make CFLAGS="-Wall -Wextra -O2 -fPIC" && lua tests/test.lua
+
