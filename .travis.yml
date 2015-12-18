@@ -40,13 +40,11 @@ notifications:
 
 # Install dependencies (Lua, Luarocks, ...).
 install:
-  - echo "$-"
   - . ./install.sh
-  - echo "$-"
 
 # "Build and test" this project. The important steps already happened
 # in the install section!
 script:
   - lua -v
-  - which luarocks >/dev/null && luarocks --version || true
+  - type -p luarocks || true
 
