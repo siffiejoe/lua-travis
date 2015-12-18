@@ -13,10 +13,10 @@ os:
 # Environment variables for the build.
 env:
   matrix:
-    - LUA=LuaJIT2.0.4   LUAROCKS=2.2.2
-    - LUA=Lua5.2.4      LUAROCKS=2.2.2
+    - LUA=LuaJIT-2.0.4  LUAROCKS=LuaRocks-2.2.2
+    - LUA=Lua5.2.4      LUAROCKS=LuaRocks2.2.2
     -                   LUAROCKS=2.2.2   # LUA has a default
-    - LUA=5.3.2                          # LUAROCKS is optional
+    - LUA=Lua-5.3.2                      # LUAROCKS is optional
     - LUA=xyz           LUAROCKS=2.2.2   # invalid Lua version
     - LUA=100.0.0       LUAROCKS=2.2.2   # non-existent Lua version
     - LUA=luajit100.0.0 LUAROCKS=2.2.2   # non-existent LuaJIT version
@@ -38,7 +38,7 @@ branches:
 notifications:
   email: false
 
-# Install dependencies (Lua, Luarocks, ...).
+# Install dependencies (Lua, LuaRocks, ...).
 install:
   - . ./install.sh
 

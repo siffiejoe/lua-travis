@@ -1,3 +1,5 @@
+# it is unlikely that an HTTP error page is a valid .tar.gz file, but
+# make sure that an error is raised anyway:
 set -o pipefail
 
 # target directory for Lua/LuaRocks/...
@@ -55,8 +57,12 @@ install_luarocks() {
 [ -n "$LUA" ] || LUA=5.3.2
 # download and install the requested Lua interpreter
 case "$LUA" in
+  [Ll]ua[Jj][Ii][Tt]-[0123456789]*.*)
+    (cd "$D" && install_luajit "${LUA#???????}") ;;
   [Ll]ua[Jj][Ii][Tt][0123456789]*.*)
     (cd "$D" && install_luajit "${LUA#??????}") ;;
+  [Ll]ua-[0123456789]*.*)
+    (cd "$D" && install_lua "${LUA#????}") ;;
   [Ll]ua[0123456789]*.*)
     (cd "$D" && install_lua "${LUA#???}") ;;
   [0123456789]*.*)
@@ -67,7 +73,16 @@ esac || return 1
 
 # download and install LuaRocks (if requested)
 if [ -n "$LUAROCKS" ]; then
-  (cd "$D" && install_luarocks "$LUAROCKS") || return 1
+  case "$LUAROCKS" in
+    [Ll]ua[Rr]ocks-[0123456789]*.*)
+      (cd "$D" && install_luarocks "${LUAROCKS#?????????}") ;;
+    [Ll]ua[Rr]ocks[0123456789]*.*)
+      (cd "$D" && install_luarocks "${LUAROCKS#????????}") ;;
+    [0123456789]*.*)
+      (cd "$D" && install_luarocks "$LUAROCKS") ;;
+    *)
+      echo "invalid LuaRocks version: $LUAROCKS" >&2; false ;;
+  esac || return 1
 fi
 
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
