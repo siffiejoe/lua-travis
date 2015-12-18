@@ -47,7 +47,6 @@ install:
 # "Build and test" this project. The important steps already happened
 # in the install section!
 script:
-  - echo "$-"
   - lua -v
   - which luarocks >/dev/null && luarocks --version || true
 
