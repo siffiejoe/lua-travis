@@ -4,39 +4,48 @@ set -e -o pipefail
 D="$HOME/programs"
 
 
+# function for logging commands (set +v is too verbose)
+v() {
+  echo -n -e "\033[36m" >&2
+  echo -n "$@" >&2
+  echo -e "\033[0m" >&2
+  "$@"
+}
+
+
 tgz_download() {
   curl --fail --silent --show-error --location "$1" | tar xz
 }
 
 
 install_lua() {
-  tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz
+  v tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz
   case "`uname -s`" in
     Linux) local LUA_MAKE_TARGET=linux ;;
     Darwin) local LUA_MAKE_TARGET=macosx ;;
     *) echo "unsupported system" >&2; return 1 ;;
   esac
   (cd lua-"$1" && \
-    make "$LUA_MAKE_TARGET" && \
-    make install INSTALL_TOP="$D")
+    v make "$LUA_MAKE_TARGET" && \
+    v make install INSTALL_TOP="$D")
 }
 
 
 install_luajit() {
-  tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz
+  v tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz
   (cd LuaJIT-"$1" && \
-    make PREFIX="$D" && \
-    make install PREFIX="$D")
+    v make PREFIX="$D" && \
+    v make install PREFIX="$D")
   ln -sf luajit "$D/bin/lua"
   (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
 }
 
 
 install_luarocks() {
-  tgz_download http://luarocks.org/releases/luarocks-"$1".tar.gz
+  v tgz_download http://luarocks.org/releases/luarocks-"$1".tar.gz
   (cd luarocks-"$1" && \
-    ./configure --prefix="$D" --with-lua="$D" --force-config && \
-    make bootstrap)
+    v ./configure --prefix="$D" --with-lua="$D" --force-config && \
+    v make bootstrap)
 }
 
 
