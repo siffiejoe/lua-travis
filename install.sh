@@ -1,4 +1,4 @@
-set -e -o pipefail
+set -o pipefail
 
 # target directory for Lua/LuaRocks/...
 D="$HOME/programs"
@@ -7,7 +7,7 @@ D="$HOME/programs"
 # function for logging commands (set +v is too verbose)
 v() {
   echo -n -e "\033[36m" >&2
-  echo -n "$@" >&2
+  echo -n "# $@" >&2
   echo -e "\033[0m" >&2
   "$@"
 }
@@ -19,33 +19,33 @@ tgz_download() {
 
 
 install_lua() {
-  v tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz
   case "`uname -s`" in
     Linux) local LUA_MAKE_TARGET=linux ;;
     Darwin) local LUA_MAKE_TARGET=macosx ;;
     *) echo "unsupported system" >&2; return 1 ;;
   esac
-  (cd lua-"$1" && \
-    v make "$LUA_MAKE_TARGET" && \
-    v make install INSTALL_TOP="$D")
+  v tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz && \
+    (cd lua-"$1" && \
+      v make "$LUA_MAKE_TARGET" && \
+      v make install INSTALL_TOP="$D")
 }
 
 
 install_luajit() {
-  v tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz
-  (cd LuaJIT-"$1" && \
-    v make PREFIX="$D" && \
-    v make install PREFIX="$D")
-  ln -sf luajit "$D/bin/lua"
-  (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
+  v tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz && \
+    (cd LuaJIT-"$1" && \
+      v make PREFIX="$D" && \
+      v make install PREFIX="$D") && \
+    ln -sf luajit "$D/bin/lua" && \
+    (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
 }
 
 
 install_luarocks() {
-  v tgz_download http://luarocks.org/releases/luarocks-"$1".tar.gz
-  (cd luarocks-"$1" && \
-    v ./configure --prefix="$D" --with-lua="$D" --force-config && \
-    v make bootstrap)
+  v tgz_download http://luarocks.org/releases/luarocks-"$1".tar.gz && \
+    (cd luarocks-"$1" && \
+      v ./configure --prefix="$D" --with-lua="$D" --force-config && \
+      v make bootstrap)
 }
 
 
@@ -63,15 +63,17 @@ case "$LUA" in
     (cd "$D" && install_lua "$LUA") ;;
   *)
     echo "invalid Lua version: $LUA" >&2; false ;;
-esac
+esac || return 1
 
 # download and install LuaRocks (if requested)
-[ -z "$LUAROCKS" ] || (cd "$D" && install_luarocks "$LUAROCKS")
+if [ -n "$LUAROCKS" ]; then
+  (cd "$D" && install_luarocks "$LUAROCKS") || return 1
+fi
 
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
 export PATH="$D/bin:$PATH"
-[ -z "$LUAROCKS" ] || eval "`luarocks path`"
+[ -n "$LUAROCKS" ] && eval "`luarocks path`"
 
 # restore shell options
-set +e +o pipefail
+set +o pipefail
 
