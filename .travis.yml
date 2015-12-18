@@ -28,7 +28,6 @@ matrix:
     - env: LUA=100.0.0       LUAROCKS=2.2.2
     - env: LUA=luajit100.0.0 LUAROCKS=2.2.2
     - env: LUA=5.3.2         LUAROCKS=100.0.0
-    - env: LUA=5.1.5
 
 # Only test changes to the master branch.
 branches:
@@ -47,5 +46,5 @@ install:
 # in the install section!
 script:
   - lua -v
-  - luarocks --version
+  - which luarocks >/dev/null && luarocks --version || true
 
