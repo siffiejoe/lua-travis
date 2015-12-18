@@ -1,0 +1,51 @@
+language: c
+
+# Select container based VM (no sudo available).
+sudo: false
+
+# Use gcc as the C compiler.
+compiler: gcc
+
+# Specify operating systems to test on (linux and/or osx).
+os:
+  - linux
+
+# Environment variables for the build.
+env:
+  matrix:
+    - LUA=LuaJIT2.0.4   LUAROCKS=2.2.2
+    - LUALUA=Lua5.2.4   LUAROCKS=2.2.2
+    - LUA=5.3.2         LUAROCKS=2.2.2
+    - LUA=xyz           LUAROCKS=2.2.2   # invalid Lua version
+    - LUA=100.0.0       LUAROCKS=2.2.2   # non-existent Lua version
+    - LUA=luajit100.0.0 LUAROCKS=2.2.2   # non-existent LuaJIT version
+    - LUA=5.3.2         LUAROCKS=100.0.0 # non-existent LuaRocks version
+    - LUA=5.1.5                          # no LuaRocks
+
+matrix:
+  allow_failures:
+    - env: LUA=xyz           LUAROCKS=2.2.2
+    - env: LUA=100.0.0       LUAROCKS=2.2.2
+    - env: LUA=luajit100.0.0 LUAROCKS=2.2.2
+    - env: LUA=5.3.2         LUAROCKS=100.0.0
+    - env: LUA=5.1.5
+
+# Only test changes to the master branch.
+branches:
+  only:
+    - master
+
+# Disable email notifications.
+notifications:
+  email: false
+
+# Install dependencies (Lua, Luarocks, ...).
+install:
+  - . ./install.sh
+
+# "Build and test" this project. The important steps already happened
+# in the install section!
+script:
+  - lua -v
+  - luarocks --version
+
