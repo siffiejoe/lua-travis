@@ -1,4 +1,3 @@
-SHELLOPTIONS=`shopt -p -o`
 set -e -o pipefail
 
 # target directory for Lua/LuaRocks/...
@@ -65,5 +64,5 @@ export PATH="$D/bin:$PATH"
 [ -z "$LUAROCKS" ] || eval "`luarocks path`"
 
 # restore shell options
-eval "$SHELLOPTIONS" || true
+set +e +o pipefail
 
