@@ -14,7 +14,7 @@ os:
 env:
   matrix:
     - LUA=LuaJIT2.0.4   LUAROCKS=2.2.2
-    - LUALUA=Lua5.2.4   LUAROCKS=2.2.2
+    - LUA=Lua5.2.4      LUAROCKS=2.2.2
     - LUA=5.3.2         LUAROCKS=2.2.2
     - LUA=xyz           LUAROCKS=2.2.2   # invalid Lua version
     - LUA=100.0.0       LUAROCKS=2.2.2   # non-existent Lua version
