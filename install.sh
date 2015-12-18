@@ -1,3 +1,4 @@
+SHELLOPTIONS=`shopt -p -o`
 set -e -o pipefail
 
 # target directory for Lua/LuaRocks/...
@@ -5,7 +6,7 @@ D="$HOME/programs"
 
 
 tgz_download() {
-  curl -s -S --location "$1" | tar xz
+  curl --fail --silent --show-error --location "$1" | tar xz
 }
 
 
@@ -62,4 +63,7 @@ esac
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
 export PATH="$D/bin:$PATH"
 [ -z "$LUAROCKS" ] || eval "`luarocks path`"
+
+# restore shell options
+eval "$SHELLOPTIONS" || true
 
