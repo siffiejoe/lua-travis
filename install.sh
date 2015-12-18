@@ -1,4 +1,4 @@
-set -e
+set -e -o pipefail
 
 # target directory for Lua/LuaRocks/...
 D="$HOME/programs"
