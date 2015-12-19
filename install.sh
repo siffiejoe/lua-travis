@@ -1,7 +1,3 @@
-# it is unlikely that an HTTP error page is a valid .tar.gz file, but
-# make sure that an error is raised anyway:
-set -o pipefail
-
 # target directory for Lua/LuaRocks/...
 D="$HOME/programs"
 
@@ -88,7 +84,4 @@ fi
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
 export PATH="$D/bin:$PATH"
 [ -n "$LUAROCKS" ] && eval "`luarocks path`"
-
-# restore shell options
-set +o pipefail
 
