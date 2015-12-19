@@ -34,7 +34,7 @@ install_luajit() {
     (cd LuaJIT-"$1" && \
       v make PREFIX="$D" && \
       v make install PREFIX="$D") && \
-    ln -sf luajit "$D/bin/lua" && \
+    ln -sf luajit-"$1" "$D/bin/lua" && \
     (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
 }
 
@@ -83,5 +83,5 @@ fi
 
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
 export PATH="$D/bin:$PATH"
-[ -n "$LUAROCKS" ] && eval "`luarocks path`"
+[ -z "$LUAROCKS" ] || eval "`luarocks path`"
 
