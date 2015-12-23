@@ -12,7 +12,8 @@ v() {
 
 
 tgz_download() {
-  curl --fail --silent --show-error --location "$1" | tar xz
+  (set -o pipefail; \
+    curl --fail --silent --show-error --location "$1" | tar xz)
 }
 
 
@@ -30,12 +31,11 @@ install_lua() {
 
 
 install_luajit() {
-  v tgz_download http://luajit.org/download/LuaJIT-"$1".tar.gz && \
+  v tgz_download https://github.com/LuaJIT/LuaJIT/archive/v"$1".tar.gz && \
     (cd LuaJIT-"$1" && \
       v make PREFIX="$D" && \
-      v make install PREFIX="$D") && \
-    ln -sf luajit-"$1" "$D/bin/lua" && \
-    (cd "$D"/include && find luajit-* -name "*.h*" -exec ln -sf {} . \;)
+      v make install PREFIX="$D" INSTALL_INC="$D/include") && \
+    ln -sf luajit-"$1" "$D/bin/lua"
 }
 
 
