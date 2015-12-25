@@ -35,7 +35,7 @@ install_luajit() {
     (cd LuaJIT-"$1" && \
       v make PREFIX="$D" && \
       v make install PREFIX="$D" INSTALL_INC="$D/include") && \
-    ln -sf luajit-"$1" "$D/bin/lua"
+    v ln -sf luajit-"$1" "$D/bin/lua"
 }
 
 
@@ -65,7 +65,7 @@ case "$LUA" in
     (cd "$D" && install_lua "$LUA") ;;
   *)
     echo "invalid Lua version: $LUA" >&2; false ;;
-esac || return 1
+esac || return
 
 # download and install LuaRocks (if requested)
 if [ -n "$LUAROCKS" ]; then
@@ -78,7 +78,7 @@ if [ -n "$LUAROCKS" ]; then
       (cd "$D" && install_luarocks "$LUAROCKS") ;;
     *)
       echo "invalid LuaRocks version: $LUAROCKS" >&2; false ;;
-  esac || return 1
+  esac || return
 fi
 
 # setup LUA_PATH, LUA_CPATH, and PATH for Lua and LuaRocks
