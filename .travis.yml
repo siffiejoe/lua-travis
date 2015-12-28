@@ -13,23 +13,22 @@ os:
 # Environment variables for the build.
 env:
   matrix:
-    - LUA=LuaJIT-2.0.4  LUAROCKS=LuaRocks-2.2.2
-    - LUA=Lua5.2.4      LUAROCKS=LuaRocks2.2.2
-    -                   LUAROCKS=2.2.2   # LUA has a default
-    - LUA=Lua-5.3.2                      # LUAROCKS is optional
-    - LUA=xyz           LUAROCKS=2.2.2   # invalid Lua version
-    - LUA=100.0.0       LUAROCKS=2.2.2   # non-existent Lua version
-    - LUA=luajit100.0.0 LUAROCKS=2.2.2   # non-existent LuaJIT version
-    - LUA=lua5.3.2      LUAROCKS=xyz     # invalid LuaRocks version
-    - LUA=5.3.2         LUAROCKS=100.0.0 # non-existent LuaRocks version
+    - LUA=LuaJIT-2.0.4   LUAROCKS=LuaRocks-2.2.2
+    -                    LUAROCKS=2.2.2   # LUA has a default
+    - LUA=Lua-5.2.4                       # LUAROCKS is optional
+    - LUA=xyz            LUAROCKS=2.2.2   # invalid Lua version
+    - LUA=100.0.0        LUAROCKS=2.2.2   # non-existent Lua version
+    - LUA=luajit-100.0.0 LUAROCKS=2.2.2   # non-existent LuaJIT version
+    - LUA=lua-5.1.5      LUAROCKS=xyz     # invalid LuaRocks version
+    - LUA=5.3.2          LUAROCKS=100.0.0 # non-existent LuaRocks version
 
 matrix:
   allow_failures:
-    - env: LUA=xyz           LUAROCKS=2.2.2
-    - env: LUA=100.0.0       LUAROCKS=2.2.2
-    - env: LUA=luajit100.0.0 LUAROCKS=2.2.2
-    - env: LUA=lua5.3.2      LUAROCKS=xyz
-    - env: LUA=5.3.2         LUAROCKS=100.0.0
+    - env: LUA=xyz            LUAROCKS=2.2.2
+    - env: LUA=100.0.0        LUAROCKS=2.2.2
+    - env: LUA=luajit-100.0.0 LUAROCKS=2.2.2
+    - env: LUA=lua-5.1.5      LUAROCKS=xyz
+    - env: LUA=5.3.2          LUAROCKS=100.0.0
 
 # Only test changes to the master branch.
 branches:

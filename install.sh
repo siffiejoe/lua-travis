@@ -13,7 +13,7 @@ v() {
 
 tgz_download() {
   (set -o pipefail; \
-    curl --fail --silent --show-error --location "$1" | tar xz)
+    curl --fail --silent --show-error --location "$1" | tar xzp)
 }
 
 
@@ -55,12 +55,8 @@ install_luarocks() {
 case "$LUA" in
   [Ll]ua[Jj][Ii][Tt]-[0123456789]*.*)
     (cd "$D" && install_luajit "${LUA#???????}") ;;
-  [Ll]ua[Jj][Ii][Tt][0123456789]*.*)
-    (cd "$D" && install_luajit "${LUA#??????}") ;;
   [Ll]ua-[0123456789]*.*)
     (cd "$D" && install_lua "${LUA#????}") ;;
-  [Ll]ua[0123456789]*.*)
-    (cd "$D" && install_lua "${LUA#???}") ;;
   [0123456789]*.*)
     (cd "$D" && install_lua "$LUA") ;;
   *)
@@ -72,8 +68,6 @@ if [ -n "$LUAROCKS" ]; then
   case "$LUAROCKS" in
     [Ll]ua[Rr]ocks-[0123456789]*.*)
       (cd "$D" && install_luarocks "${LUAROCKS#?????????}") ;;
-    [Ll]ua[Rr]ocks[0123456789]*.*)
-      (cd "$D" && install_luarocks "${LUAROCKS#????????}") ;;
     [0123456789]*.*)
       (cd "$D" && install_luarocks "$LUAROCKS") ;;
     *)
