@@ -13,7 +13,7 @@ v() {
 
 tgz_download() {
   (set -o pipefail; \
-    curl --fail --silent --show-error --location "$1" | tar xzp)
+    curl --fail --silent --show-error --location "$1" | tar xzpf -)
 }
 
 
@@ -21,11 +21,12 @@ install_lua() {
   case "`uname -s`" in
     Linux) local LUA_MAKE_TARGET=linux ;;
     Darwin) local LUA_MAKE_TARGET=macosx ;;
+    FreeBSD) local LUA_MAKE_TARGET='freebsd CC=cc' ;;
     *) echo "unsupported system" >&2; return 1 ;;
   esac
   v tgz_download http://www.lua.org/ftp/lua-"$1".tar.gz && \
     (cd lua-"$1" && \
-      v make "$LUA_MAKE_TARGET" && \
+      v make $LUA_MAKE_TARGET && \
       v make install INSTALL_TOP="$D")
 }
 
